@@ -1,3 +1,11 @@
+# Verify the operating system
+if (-not $IsWindows)
+{
+    Write-Host "Non-Windows device detected."
+    Write-Host "This script only supports Windows."
+    exit 0
+}
+
 # Configuration
 $Username = "Efficium"
 $Password = ConvertTo-SecureString "Ch@ng3Th1$P@$$w0rd!" -AsPlainText -Force
