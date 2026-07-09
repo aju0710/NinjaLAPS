@@ -1,7 +1,7 @@
 ###DICTIONARY_DOWNLOAD_SCRIPT
 
 # Verify the operating system
-if (-not $IsWindows)
+if (-not ($PSVersionTable.Platform -eq "Win32NT" -or $env:OS -eq "Windows_NT"))
 {
     Write-Host "Non-Windows device detected."
     Write-Host "This script only supports Windows."
