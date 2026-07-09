@@ -1,5 +1,13 @@
 #LAPS_Rotate_Local_Password_Script
-### Configuration
+# Verify the operating system
+if (-not $IsWindows)
+{
+    Write-Host "Non-Windows device detected."
+    Write-Host "This script only supports Windows."
+    exit 0
+}
+
+#Configuration
 $Username = "Efficium"
 $Path = "C:\NinjaLAPS\dict.csv"
 
