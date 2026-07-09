@@ -1,0 +1,150 @@
+# LAPS_REMOVE_SCRIPT
+# LAPS Remove / Rollback Script
+# Removes the LAPS implementation from the endpoint.
+
+
+# Verify Operating System
+if ($env:OS -ne "Windows_NT")
+{
+    Write-Host "Non-Windows device detected."
+    Write-Host "This script only supports Windows."
+    exit 0
+}
+
+$DictionaryFolder = "C:\NinjaLAPS"
+$DictionaryFile   = "$DictionaryFolder\dict.csv"
+$LocalAdmin       = "Efficium"
+
+Write-Host "Starting LAPS Rollback..."
+
+# Remove Local Administrator Account
+
+Write-Host ""
+Write-Host "Checking Local Administrator account..."
+
+try
+{
+    $User = Get-LocalUser -Name $LocalAdmin -ErrorAction SilentlyContinue
+
+    if ($User)
+    {
+        Write-Host "Disabling local administrator..."
+        Disable-LocalUser -Name $LocalAdmin -ErrorAction SilentlyContinue
+
+        Write-Host "Removing local administrator..."
+        Remove-LocalUser -Name $LocalAdmin
+
+        Write-Host "Local Administrator account removed successfully."
+    }
+    else
+    {
+        Write-Host "Local Administrator account not found."
+    }
+}
+catch
+{
+    Write-Host "Failed to remove Local Administrator."
+    Write-Host $_.Exception.Message
+}
+
+# Remove Dictionary File
+
+Write-Host ""
+Write-Host "Checking dictionary..."
+
+try
+{
+    if (Test-Path $DictionaryFile)
+    {
+        Remove-Item $DictionaryFile -Force
+
+        if (!(Test-Path $DictionaryFile))
+        {
+            Write-Host "Dictionary removed successfully."
+        }
+        else
+        {
+            Write-Host "Dictionary still exists."
+        }
+    }
+    else
+    {
+        Write-Host "Dictionary not found."
+    }
+}
+catch
+{
+    Write-Host "Failed to remove dictionary."
+    Write-Host $_.Exception.Message
+}
+
+# Remove NinjaLAPS Folder
+
+Write-Host ""
+Write-Host "Checking NinjaLAPS folder..."
+
+try
+{
+    if (Test-Path $DictionaryFolder)
+    {
+        Remove-Item $DictionaryFolder -Recurse -Force
+
+        if (!(Test-Path $DictionaryFolder))
+        {
+            Write-Host "NinjaLAPS folder removed successfully."
+        }
+        else
+        {
+            Write-Host "NinjaLAPS folder still exists."
+        }
+    }
+    else
+    {
+        Write-Host "NinjaLAPS folder not found."
+    }
+}
+catch
+{
+    Write-Host "Failed to remove NinjaLAPS folder."
+    Write-Host $_.Exception.Message
+}
+
+# Clear NinjaOne Custom Field
+
+Write-Host ""
+Write-Host "Clearing NinjaOne 'localpass' custom field..."
+
+try
+{
+    if (Get-Command Ninja-Property-Set -ErrorAction SilentlyContinue)
+    {
+        Ninja-Property-Set "localpass" ""
+        Write-Host "Localpass custom field cleared successfully."
+    }
+    else
+    {
+        Write-Host "NinjaOne Property module not available. Skipping custom field cleanup."
+    }
+}
+catch
+{
+    Write-Host "Unable to clear Localpass custom field."
+    Write-Host $_.Exception.Message
+}
+
+# Rollback Summary
+
+Write-Host ""
+Write-Host "LAPS Rollback Completed"
+Write-Host "The following components have been processed:"
+Write-Host " - Local Administrator Account (Efficium)"
+Write-Host " - Dictionary File (dict.csv)"
+Write-Host " - NinjaLAPS Folder"
+Write-Host " - NinjaOne Custom Field (localpass)"
+Write-Host ""
+Write-Host "NOTE:"
+Write-Host "This script does NOT remove NinjaOne Scheduled Automations,"
+Write-Host "Policies, or Automation Scripts."
+Write-Host "Those items must be removed manually from the NinjaOne Portal."
+
+exit 0
