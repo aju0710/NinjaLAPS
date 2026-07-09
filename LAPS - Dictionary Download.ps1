@@ -1,5 +1,13 @@
 ###DICTIONARY_DOWNLOAD_SCRIPT
 
+# Verify the operating system
+if (-not $IsWindows)
+{
+    Write-Host "Non-Windows device detected."
+    Write-Host "This script only supports Windows."
+    exit 0
+}
+
 $DictionaryFolder = "C:\NinjaLAPS"
 $DictionaryFile   = "$DictionaryFolder\dict.csv"
 $DictionaryUrl    = "https://cdn.jsdelivr.net/gh/aju0710/NinjaLAPS@main/dict.csv"
