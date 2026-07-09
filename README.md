@@ -209,9 +209,7 @@ Current Progress
 ## Author
 
 **AJ Ugjoc**
-
-System Engineer / Microsoft 365 Administrator
-
+System Engineer | Microsoft 365 Administrator
 Created for internal automation and Proof of Concept using NinjaOne RMM.
 
 ---
